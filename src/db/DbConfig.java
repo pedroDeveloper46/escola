@@ -10,6 +10,10 @@ public class DbConfig {
 	
 	private static Connection conn = null;
 	
+	public DbConfig() {
+		getConnection();
+	}
+	
 	public static Connection getConnection() {
 		
 		if (conn == null) {
