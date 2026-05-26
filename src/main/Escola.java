@@ -13,7 +13,7 @@ public class Escola {
 		
 		AlunoView alunoView = new AlunoView();
 		
-		alunoView.listarAlunos();
+		
 
 		
 	}

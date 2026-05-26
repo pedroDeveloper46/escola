@@ -12,22 +12,27 @@ import db.DbConfig;
 import db.DbException;
 
 public class AlunoDAO {
+	
+	private DbConfig db = new DbConfig();
 		
 	
 	public void cadastrarAluno(Aluno aluno) throws SQLException {
 		
 		String sql = "INSERT INTO ALUNO (nome, email, senha) VALUES (?,?,?)";
 		
-		try(Connection conn = DbConfig.getConnection();
-				PreparedStatement st = conn.prepareStatement(sql)){
+		try{
+			
+			PreparedStatement st = db.retornaPreparedStatement(sql);
 			
 			st.setString(1, aluno.getNome());
 			st.setString(2, aluno.getEmail());
 			st.setString(3, aluno.getSenha());
 			st.executeUpdate();
 			
+			db.closeConnection();
+			
 		}catch(SQLException e) {
-			throw new DbException("Erro ao tentar consultar os alunos" + e.getMessage());
+			throw new DbException("Erro ao tentar cadastrar o aluno" + e.getMessage());
 		}
 		
 		
@@ -40,8 +45,9 @@ public class AlunoDAO {
 		
 		String sql = "select * from aluno";
 		
-		try (Connection conn = DbConfig.getConnection();
-				PreparedStatement st = conn.prepareStatement(sql)){
+		try {
+			
+			PreparedStatement st = db.retornaPreparedStatement(sql);
 			
 			ResultSet rs = st.executeQuery();
 			
@@ -55,12 +61,43 @@ public class AlunoDAO {
 				
 			}
 			
+			db.closeConnection();
+			
 			
 		}catch(SQLException e) {
 			throw new DbException("Erro ao tentar consultar os alunos" + e.getMessage());
 		}
 		
 		return lista;
+		
+	}
+	
+	public boolean existeAluno(String email) {
+		 
+		String sql = "select * from aluno where = ?";
+		
+		try {
+			
+			PreparedStatement st = db.retornaPreparedStatement(sql);
+			
+			st.setString(1, email);
+			
+			ResultSet rs = st.executeQuery();
+			
+			if (rs.next()) {
+				return false;
+			}
+			
+			return true;
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		
+		return true;
+		
 		
 	}
 	

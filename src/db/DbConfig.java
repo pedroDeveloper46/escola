@@ -3,6 +3,8 @@ package db;
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -54,7 +56,7 @@ public class DbConfig {
 		
 	}
 	
-	public static void closeConnection() {
+	public void closeConnection() {
 		
 		if (conn != null) {
 			try {
@@ -64,6 +66,14 @@ public class DbConfig {
 			}
 		}
 		
+	}
+	
+	public PreparedStatement retornaPreparedStatement(String sql) throws SQLException{
+		
+		try(Connection conn = DbConfig.getConnection();
+				PreparedStatement st = conn.prepareStatement(sql)){
+			return st;
+		}
 	}
 
 }

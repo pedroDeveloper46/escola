@@ -1,5 +1,7 @@
 package model;
 
+import utils.SenhaUtils;
+
 public class Aluno {
 
 	private Integer id_aluno;
@@ -40,6 +42,8 @@ public class Aluno {
 
 	public void setSenha(String senha) {
 		this.senha = senha;
+		
+		
 	}
 
 	@Override
@@ -60,11 +64,18 @@ public class Aluno {
 		
 	}
 	
+	public String criptoSenha(String senha) {
+		return senha = SenhaUtils.gerarHash(senha);
+		
+	}
+	
 	public void mostrarAluno() {
+		
 		System.out.println("ID: " + this.getId_aluno());
 		System.out.println("Nome: " + this.getNome());
 		System.out.println("Email " + this.getEmail());
 		System.out.println();
+	
 	}
 	
 	
