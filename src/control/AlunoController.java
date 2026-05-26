@@ -24,8 +24,13 @@ public class AlunoController {
 			
 		}
 		
+		if(!aluno.getEmail().contains("@")) {
+			System.out.println("E-mail inválido!");
+			return false;
+		}
+		
 		if (alunoDAO.existeAluno(aluno.getEmail())) {
-			System.out.println("Já existe um aluno cadastrado com esse e-mail");
+			System.out.println("Já existe um aluno cadastrado com esse e-mail!");
 			return false;
 		}
 		

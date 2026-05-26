@@ -70,10 +70,7 @@ public class DbConfig {
 	
 	public PreparedStatement retornaPreparedStatement(String sql) throws SQLException{
 		
-		try(Connection conn = DbConfig.getConnection();
-				PreparedStatement st = conn.prepareStatement(sql)){
-			return st;
-		}
+		 return conn.prepareStatement(sql);
 	}
 
 }

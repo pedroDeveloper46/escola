@@ -74,16 +74,18 @@ public class AlunoView {
 		
 		while (!bool) {
 			
-			System.out.println("DIGITE O SEU NOME ");
-			aluno.setNome(s.next());
+			System.out.println("DIGITE O SEU NOME");
+			aluno.setNome(s.nextLine());
 			
-			System.out.println("DIGITE O SEU EMAIL ");
-			aluno.setEmail(s.next());
+			System.out.println("DIGITE O SEU EMAIL");
+			aluno.setEmail(s.nextLine());
 			
-			System.out.println("DIGITE A SUA SENHA ");
-			aluno.setSenha(s.next());
+			System.out.println("DIGITE A SUA SENHA");
+			aluno.setSenha(s.nextLine());
 			
 			bool = alunoController.validarAluno(aluno);
+			
+			limparAluno(aluno);
 		}
 				
 		System.out.println("CADASTRO REALIZADO COM SUCESSO");
@@ -113,6 +115,12 @@ public class AlunoView {
 		if(op == 1) {
 			this.listarAlunos();
 		}
+	}
+	
+	public void limparAluno(Aluno aluno) {
+		aluno.setNome("");
+		aluno.setEmail("");
+		aluno.setSenha("");
 	}
 
 }

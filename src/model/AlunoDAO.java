@@ -14,9 +14,13 @@ import db.DbException;
 public class AlunoDAO {
 	
 	private DbConfig db = new DbConfig();
+	
+	private boolean isClosedDb = false;
 		
 	
 	public void cadastrarAluno(Aluno aluno) throws SQLException {
+		
+		
 		
 		String sql = "INSERT INTO ALUNO (nome, email, senha) VALUES (?,?,?)";
 		
@@ -29,7 +33,7 @@ public class AlunoDAO {
 			st.setString(3, aluno.getSenha());
 			st.executeUpdate();
 			
-			db.closeConnection();
+			
 			
 		}catch(SQLException e) {
 			throw new DbException("Erro ao tentar cadastrar o aluno" + e.getMessage());
@@ -40,6 +44,8 @@ public class AlunoDAO {
 	}
 	
 	public List<Aluno> listarAlunos(){
+		
+	
 		
 		List<Aluno> lista = new ArrayList<>();
 		
@@ -61,7 +67,7 @@ public class AlunoDAO {
 				
 			}
 			
-			db.closeConnection();
+			
 			
 			
 		}catch(SQLException e) {
@@ -73,8 +79,10 @@ public class AlunoDAO {
 	}
 	
 	public boolean existeAluno(String email) {
+		
+		
 		 
-		String sql = "select * from aluno where = ?";
+		String sql = "select * from aluno where email = ?";
 		
 		try {
 			
@@ -85,19 +93,36 @@ public class AlunoDAO {
 			ResultSet rs = st.executeQuery();
 			
 			if (rs.next()) {
-				return false;
+				return true;
 			}
 			
-			return true;
+			
+			return false;
 			
 			
-		} catch (Exception e) {
-			// TODO: handle exception
+		} catch(SQLException e) {
+			throw new DbException("Erro ao buscar aluno por e-mail" + e.getMessage());
+						
 		}
 		
 		
-		return true;
 		
+		
+		
+	}
+	
+	private void verificarAbreConexaoDb() {
+		
+		if (isClosedDb) {
+			db = new DbConfig(); 
+			isClosedDb = false;
+		}
+		
+	}
+	
+	private void fechaConexao() {
+		db.closeConnection();
+		isClosedDb = true;
 		
 	}
 	

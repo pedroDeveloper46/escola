@@ -64,8 +64,8 @@ public class Aluno {
 		
 	}
 	
-	public String criptoSenha(String senha) {
-		return senha = SenhaUtils.gerarHash(senha);
+	public void criptoSenha(String senha) {
+		this.senha = SenhaUtils.gerarHash(senha);
 		
 	}
 	
