@@ -22,6 +22,13 @@ public class Curso {
 		this.descricao = descricao;
 	}
 	
+	public void mostrarCurso() {
+		
+		System.out.println("CÓDIGO DO CURSO: " + this.getId_curso());
+		System.out.println("CURSO: " + this.getDescricao());
+		
+	}
+	
 	
 
 }

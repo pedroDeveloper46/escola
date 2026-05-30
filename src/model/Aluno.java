@@ -1,5 +1,7 @@
 package model;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import utils.SenhaUtils;
 
 public class Aluno {
@@ -64,8 +66,16 @@ public class Aluno {
 		
 	}
 	
-	public void criptoSenha(String senha) {
+	public String criptoSenha(String senha) {
 		this.senha = SenhaUtils.gerarHash(senha);
+		
+		return this.senha;
+		
+	}
+	
+	public boolean verificarSenha(String senha) {
+		
+		return BCrypt.checkpw(senha, this.getSenha());
 		
 	}
 	
@@ -73,7 +83,7 @@ public class Aluno {
 		
 		System.out.println("ID: " + this.getId_aluno());
 		System.out.println("Nome: " + this.getNome());
-		System.out.println("Email " + this.getEmail());
+		System.out.println("Email: " + this.getEmail());
 		System.out.println();
 	
 	}

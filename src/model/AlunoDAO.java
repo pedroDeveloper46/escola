@@ -13,9 +13,6 @@ import db.DbException;
 
 public class AlunoDAO {
 	
-	private DbConfig db = new DbConfig();
-	
-	private boolean isClosedDb = false;
 		
 	
 	public void cadastrarAluno(Aluno aluno) throws SQLException {
@@ -24,9 +21,7 @@ public class AlunoDAO {
 		
 		String sql = "INSERT INTO ALUNO (nome, email, senha) VALUES (?,?,?)";
 		
-		try{
-			
-			PreparedStatement st = db.retornaPreparedStatement(sql);
+		try(PreparedStatement st = DbConfig.getConnection().prepareStatement(sql)){
 			
 			st.setString(1, aluno.getNome());
 			st.setString(2, aluno.getEmail());
@@ -45,15 +40,12 @@ public class AlunoDAO {
 	
 	public List<Aluno> listarAlunos(){
 		
-	
 		
 		List<Aluno> lista = new ArrayList<>();
 		
 		String sql = "select * from aluno";
 		
-		try {
-			
-			PreparedStatement st = db.retornaPreparedStatement(sql);
+		try (PreparedStatement st = DbConfig.getConnection().prepareStatement(sql)) {
 			
 			ResultSet rs = st.executeQuery();
 			
@@ -66,8 +58,7 @@ public class AlunoDAO {
 				lista.add(aluno);
 				
 			}
-			
-			
+						
 			
 			
 		}catch(SQLException e) {
@@ -79,20 +70,17 @@ public class AlunoDAO {
 	}
 	
 	public boolean existeAluno(String email) {
-		
-		
-		 
+							 
 		String sql = "select * from aluno where email = ?";
 		
-		try {
-			
-			PreparedStatement st = db.retornaPreparedStatement(sql);
+		try(PreparedStatement st = DbConfig.getConnection().prepareStatement(sql)) {
 			
 			st.setString(1, email);
 			
 			ResultSet rs = st.executeQuery();
 			
 			if (rs.next()) {
+				
 				return true;
 			}
 			
@@ -103,31 +91,109 @@ public class AlunoDAO {
 		} catch(SQLException e) {
 			throw new DbException("Erro ao buscar aluno por e-mail" + e.getMessage());
 						
+		}						
+		
+	}
+	
+	public Aluno buscarAlunoPorEmail(String email) {
+		
+		Aluno aluno = new Aluno();
+		
+		String sql = "select * from aluno where email = ?";
+		
+		try(PreparedStatement st = DbConfig.getConnection().prepareStatement(sql)) {
+			
+			st.setString(1, email);
+			
+			ResultSet rs = st.executeQuery();
+			
+			while (rs.next()) {
+				
+				aluno.setId_aluno(rs.getInt("id_aluno"));
+				aluno.setNome(rs.getString("nome"));
+				aluno.setEmail(rs.getString("email"));
+				aluno.setSenha(rs.getString("senha"));
+				
+			}
+			
+			
+			return aluno;
+			
+		} catch (SQLException e) {
+			// TODO: handle exception
+			
+			throw new DbException("Erro ao buscar aluno por E-mail" + e.getMessage());
 		}
 		
 		
 		
 		
-		
 	}
 	
-	private void verificarAbreConexaoDb() {
+	public Aluno buscarAlunoPorId(int id) {
 		
-		if (isClosedDb) {
-			db = new DbConfig(); 
-			isClosedDb = false;
+		Aluno aluno = new Aluno();
+		
+		String sql = "select * from aluno where id_aluno = ?";
+		
+		try (PreparedStatement st = DbConfig.getConnection().prepareStatement(sql)) {
+			
+			ResultSet rs = st.executeQuery();
+			
+			while (rs.next()) {
+				
+				aluno.setId_aluno(rs.getInt("id_aluno"));
+				aluno.setNome(rs.getString("nome"));
+				aluno.setEmail(rs.getString("email"));
+				aluno.setSenha(rs.getString("senha"));
+				
+			}
+				
+			return aluno;
+		
+		} catch (SQLException e) {
+			// TODO: handle exception
+			throw new DbException("Erro ao buscar aluno por Id: " +e.getMessage());
 		}
 		
 	}
 	
-	private void fechaConexao() {
-		db.closeConnection();
-		isClosedDb = true;
+	public void atualizarAluno(Aluno aluno, String nome, String email, String senha) {
+		
+		String sql = "update aluno set nome = ?, email = ?, senha = ? where id_aluno = ?";
+		try(PreparedStatement st = DbConfig.getConnection().prepareStatement(sql)){
+			
+			st.setString(1, nome);
+			
+			st.setString(2, email);
+			
+			st.setString(3, senha);
+			
+			st.setInt(4, aluno.getId_aluno());
+			
+			st.executeUpdate();
+			
+		}catch (SQLException e) {
+			// TODO: handle exception
+			
+			throw new DbException("Erro ao tentar atualizar o aluno" + e.getMessage());
+		}
 		
 	}
 	
+	public boolean verificarLogin(String email, String senha) {
+		
+		Aluno aluno = buscarAlunoPorEmail(email);
+		
+		if (aluno.verificarSenha(senha)) {
+			return true;
+		}
+		
+		return false;
+		
+	}
 	
-	
+		
 	
 
 }

@@ -23,6 +23,8 @@ public class AlunoView {
 	
 	private void executarViewAluno() throws SQLException {
 		
+		Aluno alunoLogado = new Aluno();
+		
 		System.out.println("BEM VINDO!");
 		
 		System.out.println("FAÇA O LOGIN OU CADASTRO! DIGITE A OPÇÃO DESEJADA");
@@ -40,12 +42,48 @@ public class AlunoView {
 			
 		}
 		
+		s.nextLine();
+		
 		if(op == 1) {
-			//login
+			
+			String email = "";
+			String senha = "";
+			
+			boolean bool = false;
+			
+			while (!bool) {
+				
+				System.out.println("LOGIN");
+				
+				System.out.println("DIGITE O SEU E-MAIL:");
+				
+				email = s.nextLine();
+				
+				System.out.println("DIGITE A SUA SENHA:");
+				
+				senha = s.nextLine();
+				
+				bool = alunoController.verificarLogin(email, senha);
+				
+			}
+			
+			alunoLogado = alunoController.buscarAlunoPorEmail(email);
+			System.out.println("LOGIN REALIZADO COM SUCESSO!");
+			
+			System.out.println();
+			
+			System.out.println("BEM VINDO, " +alunoLogado.getNome() + "!");
+			
+			viewAlunoHome(alunoLogado);
+												
+				
+		
+			
 		}
 		
 		if(op == 2) {
 			this.cadastrarAluno();
+			
 		}
 		
 	}
@@ -63,6 +101,7 @@ public class AlunoView {
 	}
 	
 	private void cadastrarAluno() throws SQLException {
+		
 		
 		System.out.println("INICIANDO O SEU CADASTRO COMO ALUNO...");
 		
@@ -83,7 +122,7 @@ public class AlunoView {
 			System.out.println("DIGITE A SUA SENHA");
 			aluno.setSenha(s.nextLine());
 			
-			bool = alunoController.validarAluno(aluno);
+			bool = alunoController.validarCadastroAluno(aluno);
 			
 			limparAluno(aluno);
 		}
@@ -92,32 +131,73 @@ public class AlunoView {
 		
 	}
 	
-	private void alunoLogado() throws SQLException {
+	private void viewAlunoHome(Aluno aluno) throws SQLException {
 		
-		System.out.println("OLÁ ALUNO, AQUI VOCÊ PODERÁ REALIZAR MÁTRICULAS, CONSULTAR OS SEUS COLEGAS, ATUALIZAR SEUS DADOS e MANTER INATIVO O CADASTRO NA ESCOLA!");
+		System.out.println();
+		
+		System.out.println("OLÁ " + aluno.getNome() + ", AQUI VOCÊ PODERÁ REALIZAR MÁTRICULAS, CONSULTAR OS SEUS COLEGAS, ATUALIZAR SEUS DADOS e MANTER INATIVO O CADASTRO NA ESCOLA!");
 		
 		System.out.println("OPÇÕES ABAIXO");
-		System.out.println("1 - LISTAR ALUNOS");
-		System.out.println("2 - CADASTRAR ALUNO");	
-		
-		
+		System.out.println("1 - LISTAR MEUS COLEGAS, 2 - ATUALIZAR TODOS OS MEUS DADOS, 3 - REALIZAR MATRÍCULA, 4 - TRANCAR MATRÍCULA, 5 - LOGOFF");
+			
 		System.out.println("DIGITE A OPÇÃO DESEJADA");
 		
 		op = s.nextInt();
 		
-		while (op < 0) {
+		while (op < 0 || op > 5) {
 			
-			System.out.println("DIGITE A OPÇÃO DESEJADA");
+			System.out.println("OPÇÃO INVÁLIDA! DIGITE A OPÇÃO DESEJADA");
 			
 			op = s.nextInt();
 		}
 		
 		if(op == 1) {
 			this.listarAlunos();
+		}else if(op == 2) {
+			this.atualizarAluno(aluno);
+			
+		}else if (op == 3) {
+			//implementar matricula / usar objeto aluno
+		}else if(op == 4) {
+			//implementar trancamento da matricula / usa objeto aluno
+		}else {
+			this.executarViewAluno();
 		}
+		
+		this.viewAlunoHome(aluno);
 	}
 	
-	public void limparAluno(Aluno aluno) {
+	private void atualizarAluno(Aluno aluno) {
+		
+		Scanner in = new Scanner(System.in);
+		
+		System.out.println(aluno.getNome() + ", INICIANDO ATUALIZAÇÃO DOS SEUS DADOS");
+		
+	    boolean bool = false;
+	    
+	    while (!bool) {
+			
+	    	System.out.println("DIGITE O SEU NOME");
+			String nome = in.nextLine();
+			
+			System.out.println("DIGITE O SEU E-MAIL");
+			String email = in.nextLine();
+			
+			System.out.println("DIGITE A SUA SENHA");
+			String senha = in.nextLine();
+			
+			bool = alunoController.validarAtualizarCadastro(aluno, nome, email, senha);
+			
+		}
+	    
+	  
+		System.out.println(aluno.getNome() + ", O SEU CADASTRO FOI ATUALIZADO COM SUCESSO!");
+
+		
+		
+	}
+	
+	private void limparAluno(Aluno aluno) {
 		aluno.setNome("");
 		aluno.setEmail("");
 		aluno.setSenha("");
