@@ -5,11 +5,18 @@ import java.util.List;
 import java.util.Scanner;
 
 import control.AlunoController;
+import control.CursoController;
+import control.MatriculaController;
 import model.Aluno;
+import model.Curso;
 
 public class AlunoView {
 	
 	private AlunoController alunoController = new AlunoController();
+	
+	private CursoController cursoController = new CursoController();
+	
+	private MatriculaController matriculaController = new MatriculaController();
 	
 	private Scanner s = new Scanner(System.in);
 	
@@ -154,10 +161,31 @@ public class AlunoView {
 		if(op == 1) {
 			this.listarAlunos();
 		}else if(op == 2) {
+			
 			this.atualizarAluno(aluno);
 			
 		}else if (op == 3) {
 			//implementar matricula / usar objeto aluno
+			System.out.println("ABAIXO ESTARÃO OS CURSOS E SEUS RESPECTIVOS CÓDIGOS \n");
+			
+			this.listarCursos();
+			
+			//implementar método que busque o curso através de um id digitado
+			
+			Curso curso = buscarCursoPorId();
+			
+			//implementar um método que receba (aluno, curso) para matricula
+			
+			boolean bool = false;
+			
+			while (!bool) {
+				bool = matriculaController.validarMatricula(aluno, curso);
+			}
+			
+			System.out.println(aluno.getNome() + ", sua matricula no curso " + curso.getDescricao() + " foi realizada com sucesso!");
+			
+			
+			
 		}else if(op == 4) {
 			//implementar trancamento da matricula / usa objeto aluno
 		}else {
@@ -194,6 +222,37 @@ public class AlunoView {
 		System.out.println(aluno.getNome() + ", O SEU CADASTRO FOI ATUALIZADO COM SUCESSO!");
 
 		
+		
+	}
+	
+	private Curso buscarCursoPorId() {
+		
+		Scanner in = new Scanner(System.in);
+		
+		Curso curso = null;
+		
+		while (curso == null) {
+			
+			System.out.println("DIGITE O CÓDIGO DO CURSO QUE DESEJA SE MATRICULAR");
+			
+			int cod = in.nextInt();
+			
+			curso = cursoController.listarCurso(cod);
+		}
+		
+		return curso;
+		
+		
+	}
+	
+	private void listarCursos() {
+		
+		List<Curso> cursos = cursoController.listarCursos();
+		
+		for (Curso curso : cursos) {
+			curso.mostrarCurso();
+			System.out.println();
+		}
 		
 	}
 	

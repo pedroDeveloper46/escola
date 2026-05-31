@@ -134,7 +134,7 @@ public class AlunoDAO {
 		
 		Aluno aluno = new Aluno();
 		
-		String sql = "select * from aluno where id_aluno = ?";
+		String sql = "select * from aluno where id_aluno = " + id;
 		
 		try (PreparedStatement st = DbConfig.getConnection().prepareStatement(sql)) {
 			
