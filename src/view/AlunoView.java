@@ -9,6 +9,7 @@ import control.CursoController;
 import control.MatriculaController;
 import model.Aluno;
 import model.Curso;
+import model.Matricula;
 
 public class AlunoView {
 	
@@ -145,13 +146,13 @@ public class AlunoView {
 		System.out.println("OLÁ " + aluno.getNome() + ", AQUI VOCÊ PODERÁ REALIZAR MÁTRICULAS, CONSULTAR OS SEUS COLEGAS, ATUALIZAR SEUS DADOS e MANTER INATIVO O CADASTRO NA ESCOLA!");
 		
 		System.out.println("OPÇÕES ABAIXO");
-		System.out.println("1 - LISTAR MEUS COLEGAS, 2 - ATUALIZAR TODOS OS MEUS DADOS, 3 - REALIZAR MATRÍCULA, 4 - TRANCAR MATRÍCULA, 5 - LOGOFF");
+		System.out.println("1 - LISTAR MEUS COLEGAS, 2 - ATUALIZAR TODOS OS MEUS DADOS, 3 - REALIZAR MATRÍCULA, 4 - CONSULTAR MINHA MATRICULAS, 5 - TRANCAR MATRÍCULA, 6 - LOGOFF");
 			
 		System.out.println("DIGITE A OPÇÃO DESEJADA");
 		
 		op = s.nextInt();
 		
-		while (op < 0 || op > 5) {
+		while (op < 0 || op > 7) {
 			
 			System.out.println("OPÇÃO INVÁLIDA! DIGITE A OPÇÃO DESEJADA");
 			
@@ -166,28 +167,54 @@ public class AlunoView {
 			
 		}else if (op == 3) {
 			//implementar matricula / usar objeto aluno
-			System.out.println("ABAIXO ESTARÃO OS CURSOS E SEUS RESPECTIVOS CÓDIGOS \n");
 			
-			this.listarCursos();
+			boolean bool2 = false;
+			boolean bool = false;
 			
-			//implementar método que busque o curso através de um id digitado
+			Curso curso = new Curso();
 			
-			Curso curso = buscarCursoPorId();
+			while(!bool2 || !bool) {
+				
+				System.out.println("ABAIXO ESTARÃO OS CURSOS E SEUS RESPECTIVOS CÓDIGOS \n");
+				
+				this.listarCursos();
+				
+				//implementar método que busque o curso através de um id digitado
+				
+				curso = buscarCursoPorId();
+				
+				
+				bool2 = matriculaController.buscarMatriculaPorIdAlunoCurso(aluno, curso);
+				
+				bool = matriculaController.validarMatricula(aluno, curso);
+			}
 			
 			//implementar um método que receba (aluno, curso) para matricula
 			
-			boolean bool = false;
-			
-			while (!bool) {
-				bool = matriculaController.validarMatricula(aluno, curso);
-			}
 			
 			System.out.println(aluno.getNome() + ", sua matricula no curso " + curso.getDescricao() + " foi realizada com sucesso!");
 			
 			
 			
 		}else if(op == 4) {
+			
+			listarCursosMatriculados(aluno);
+			
+		}else if(op == 5) {
+			
 			//implementar trancamento da matricula / usa objeto aluno
+			
+			listarMatriculasPorAluno(aluno);
+			
+			trancarMatricula(aluno);
+			
+			
+			
+			
+		}else if(op == 6) {
+			
+			//implementar a consulta dos alunos que estão matriculados em cada curso
+			
 		}else {
 			this.executarViewAluno();
 		}
@@ -253,6 +280,67 @@ public class AlunoView {
 			curso.mostrarCurso();
 			System.out.println();
 		}
+		
+	}
+	
+	private void listarCursosMatriculados(Aluno aluno) {
+			
+		System.out.println(aluno.getNome() + ", ESSES SÃO OS CURSOS QUE VOCÊ ESTÁ MATRICULADO \n");
+		
+		List<Curso> cursos = matriculaController.listarMatriculas(aluno);
+		
+		if(cursos.isEmpty()) {
+			System.out.println("SEM MATRÍCULAS");
+		}else {
+			
+			for (Curso curso : cursos) {
+				System.out.println("CÓD Curso:"+curso.getId_curso());
+				System.out.println("Curso: " +curso.getDescricao());
+			}
+		}
+		
+		
+			
+	}
+	
+	private void listarMatriculasPorAluno(Aluno aluno) {
+		
+		System.out.println(aluno.getNome() + ", ESSAS SÃO AS SUAS MATRICULAS");
+		
+		List<Matricula> matriculas = matriculaController.listarMatriculaPorAluno(aluno);
+		
+		if(matriculas.isEmpty()) {
+			System.out.println("VOCÊ NÃO ESTÁ MATRICULADO EM NENHUM CURSO");
+		}else {
+			for (Matricula matricula : matriculas) {
+				System.out.println("CÓD DA MATRICULA:" +matricula.getId_matricula());
+				System.out.println("DESCRIÇÃO DO CURSO: " + matricula.getCurso().getDescricao());
+				System.out.println();
+			}
+		}
+		
+		
+	}
+	
+	private void trancarMatricula(Aluno aluno) {
+		
+		
+		boolean bool = false;
+		
+		while (!bool) {
+			
+			System.out.println("DIGITE O CÓDIGO DA MATRÍCULA QUE VOCÊ DESEJA FECHAR A MATRÍCULA");
+			
+			op = s.nextInt();
+			
+			bool = matriculaController.validarExcluirMatricula(aluno, op);
+		}
+		
+		Matricula matricula = matriculaController.buscarMatriculaPorId(aluno, op);
+		
+		System.out.println("FECHAMENTO DE MATRÍCULA NO CURSO" + matricula.getCurso().getDescricao()+ " FOI REALIZADA COM SUCESSO");
+		
+		
 		
 	}
 	
